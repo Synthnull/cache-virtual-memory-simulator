@@ -47,23 +47,35 @@ int addArgument(Arguments *argumentList, char *str) {
 
 int clearArguments(Arguments *argumentList) {
 	int i;
-	for (i = argumentList->numArguments - 1; i < 0; i--) {
+	for (i = argumentList->numArguments - 1; i > 0; i--) {
 	   argumentList->arguments[i] = NULL;
 	}
+
+   argumentList->numArguments = 0;
+
 	return 0;
 }
 
+int checkPowerOfTwo(int x) {
+    return x != 0 && (x & (x - 1)) == 0;
+}
+
 bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
-	int i;
+	int i = 0;
+   int j;
 	bool error;
+   char flag;
 	Arguments *currentArguments = initArguments(4);
-	for (i = 0; i < argc; i++) {
+	while (i < argc) {
 		if (argv[i][0] == '-' && strlen(argv[i]) == 2) {
-			while (argv[i][0] != '-') {
+         flag = argv[i][1];
+         i++;
+			while (i < argc && argv[i][0] != '-') {
 				addArgument(currentArguments, argv[i]);
 				i++;
 			}
-			switch (argv[i][1]) {
+
+			switch (flag) {
 			case 's':
 				if (currentArguments->numArguments != 1) {
 					error = true;
@@ -71,7 +83,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 				}
 				parameters->cacheSize = atoi(currentArguments->arguments[0]);
 
-				if (parameters->cacheSize < 8 || parameters->cacheSize < 8192) {
+				if ((parameters->cacheSize < 8 || parameters->cacheSize > 8192) || !checkPowerOfTwo(parameters->cacheSize)) {
 					error = true;
 				}
 				break;
@@ -83,7 +95,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 
 				parameters->blockSize = atoi(currentArguments->arguments[0]);
 
-				if (parameters->blockSize < 8 || parameters->blockSize < 64) {
+				if ((parameters->blockSize < 8 || parameters->blockSize > 64) || !checkPowerOfTwo(parameters->blockSize)) {
 					error = true;
 				}
 
@@ -94,12 +106,18 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 					break;
 				}
 				parameters->associativity = atoi(currentArguments->arguments[0]);
+
+            if(parameters->associativity != 1 && ((parameters->associativity < 2 || parameters->associativity > 16) || !checkPowerOfTwo(parameters->blockSize))) {
+               error = true;
+            }
 				break;
 			case 'r':
 				if (currentArguments->numArguments != 1) {
 					error = true;
 					break;
 				}
+
+            parameters->replacementPolicy = RR;
 
 				break;
 			case 'p':
@@ -108,13 +126,24 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 					break;
 				}
 
+            parameters->physicalMemory = atoi(currentArguments->arguments[0]);
+
+            if((parameters->physicalMemory < 2 || parameters->physicalMemory > 4096) || !checkPowerOfTwo(parameters->blockSize)) {
+               error = true;
+            }
+
 				break;
 			case 'u':
 				if (currentArguments->numArguments != 1) {
 					error = true;
 					break;
 				}
+            
+            parameters->physicalMemoryOS = atoi(currentArguments->arguments[0]);
 
+            if(parameters->physicalMemoryOS >= 0 && parameters->physicalMemoryOS <= 100) {
+               error = true;
+            }
 				break;
 			case 'n':
 				if (currentArguments->numArguments != 1) {
@@ -122,22 +151,34 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 					break;
 				}
 
+            parameters->timeSlice = atoi(currentArguments->arguments[0]);
+
+            if(parameters->timeSlice < -1) {
+               error = true;
+            }
+            
 				break;
 			case 'f':
-				if (currentArguments->numArguments != 1) {
+				if (currentArguments->numArguments < 1 || currentArguments->numArguments > 3) {
 					error = true;
 					break;
 				}
-
+            
+            for (j = 0; j < currentArguments->numArguments; j++) {
+               if(!addFile(&parameters->files, currentArguments->arguments[j])) {
+                  error = true;
+               }
+            }
 				break;
 			default:
 				error = true;
 				break;
 			}
 			clearArguments(currentArguments);
-		}
+		} else {
+         i++;
+      }
 	}
-
 	return error;
 }
 
