@@ -1,3 +1,4 @@
 *.o
 *.out
 .clang-format
+cache_simulator.exe
