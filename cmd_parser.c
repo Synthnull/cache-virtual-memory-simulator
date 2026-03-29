@@ -22,6 +22,10 @@ int addFile(fileArray *files, char *fileName) {
 
 	files->numFiles++;
 
+   if(files->maxFiles > files->numFiles) {
+      return 1;
+   }
+
 	files->files[files->numFiles - 1].fileName = fileName;
 	files->files[files->numFiles - 1].filePtr = fptr;
 	return 0;
