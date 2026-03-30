@@ -120,6 +120,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 
 				if ((parameters->cacheSize < 8 || parameters->cacheSize > 8192) ||
 					 !checkPowerOfTwo(parameters->cacheSize)) {
+					printf("%s\n", "ERROR: Invalid Cache Size");
 					error = true;
 				}
 				break;
@@ -133,6 +134,8 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 
 				if ((parameters->blockSize < 8 || parameters->blockSize > 64) ||
 					 !checkPowerOfTwo(parameters->blockSize)) {
+					printf("%s\n", "ERROR: Invalid Block Size");
+
 					error = true;
 				}
 
@@ -148,6 +151,8 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 					 ((parameters->associativity < 2 ||
 						parameters->associativity > 16) ||
 					  !checkPowerOfTwo(parameters->blockSize))) {
+
+printf("%s\n", "ERROR: Invalid Associativity");
 					error = true;
 				}
 				break;
@@ -171,6 +176,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 				if ((parameters->physicalMemory < 2 ||
 					  parameters->physicalMemory > 4096) ||
 					 !checkPowerOfTwo(parameters->blockSize)) {
+printf("%s\n", "ERROR: Invalid Physical Memory Size");
 					error = true;
 				}
 
@@ -185,6 +191,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 
 				if (parameters->physicalMemoryOS < 0 ||
 					 parameters->physicalMemoryOS > 100) {
+printf("%s\n", "ERROR: Invalid OS Memory Utilization");
 					error = true;
 				}
 				break;
@@ -210,6 +217,7 @@ bool parseCommandLine(int argc, char *argv[], Parameters *parameters) {
 				for (j = 0; j < currentArguments->numArguments; j++) {
 					if (addFile(&parameters->files,
 									currentArguments->arguments[j])) {
+printf("%s\n", "ERROR: Invalid File");
 						error = true;
 					}
 				}
