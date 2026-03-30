@@ -1,6 +1,7 @@
 #ifndef PRINT_H
 #define PRINT_H
-
+#include "cmd_parser.h"
+#include "memory_calculations.h"
 
 typedef struct {
     int totalBlocks;

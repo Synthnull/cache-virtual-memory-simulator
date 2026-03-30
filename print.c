@@ -19,7 +19,7 @@ void printCacheInput(Parameters *params) {
     printf("Block Size: %d bytes\n", params->blockSize);
     printf("Associativity: %d\n", params->associativity);
     printf("Replacement Policy: %s\n",
-           getReplacementPolicyString(params->replacementPolicy));
+           "RND");
     printf("Physical Memory: %d MB\n", params->physicalMemory);
     printf("Percent Memory Used by System: %d%%\n",
            params->physicalMemoryOS);
