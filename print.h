@@ -2,19 +2,6 @@
 #define PRINT_H
 
 
-
-
-typedef struct {
-    int cacheSizeKB;
-    int blockSize;
-    int associativity;
-    char replacementPolicy[10];
-    int physicalMemoryMB;
-    double percentUsed;
-    int instructionsPerSlice;
-} CacheInput;
-
-
 typedef struct {
     int totalBlocks;
     int tagBits;
@@ -27,13 +14,9 @@ typedef struct {
 } CacheCalculated;
 
 
-
-
 void printCalculationResults(
     int teamNumber,
-    char traceFiles[][100],
-    int numFiles,
-    CacheInput cacheInput,
+    Parameters *params,
     CacheCalculated cacheCalc,
     MemoryCalculationResults memResults
 );
