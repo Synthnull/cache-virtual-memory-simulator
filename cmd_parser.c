@@ -9,7 +9,7 @@ Parameters *initParameters(int fileCount) {
 	Parameters *ptr = malloc(sizeof(Parameters));
 	ptr->files.maxFiles = fileCount;
 	ptr->files.numFiles = 0;
-	ptr->files.files = malloc(sizeof(File) * fileCount);
+	ptr->files.files = calloc(fileCount, sizeof(File));
 	return ptr;
 }
 
@@ -22,7 +22,7 @@ int addFile(fileArray *files, char *fileName) {
 
 	files->numFiles++;
 
-   if(files->maxFiles > files->numFiles) {
+   if(files->maxFiles < files->numFiles) {
       return 1;
    }
 
@@ -33,10 +33,11 @@ int addFile(fileArray *files, char *fileName) {
 
 int closeFiles(fileArray *ptr) {
 	int i;
-	for (i = ptr->numFiles - 1; i >= 0; i--) {
+	for (i =0; i < ptr->numFiles; i++) {
 		if (ptr->files[i].filePtr != NULL) {
 			fclose(ptr->files[i].filePtr);
 			ptr->files[i].fileName = NULL;
+         ptr->files[i].filePtr = NULL;
 		}
 	}
 
