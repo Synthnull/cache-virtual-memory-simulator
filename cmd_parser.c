@@ -23,6 +23,7 @@ int addFile(fileArray *files, char *fileName) {
 	files->numFiles++;
 
 	if (files->maxFiles < files->numFiles) {
+      files->maxFiles--; //cancel file
 		return 1;
 	}
 
@@ -162,7 +163,11 @@ printf("%s\n", "ERROR: Invalid Associativity");
 					break;
 				}
 
-				parameters->replacementPolicy = RR;
+				if (strcmp(currentArguments->arguments[0], "rr")) {
+               parameters->replacementPolicy = RR;
+            } else if (strcmp(currentArguments->arguments[0], "rnd")){
+               parameters->replacementPolicy = RND;
+            }
 
 				break;
 			case 'p':
