@@ -14,7 +14,7 @@ void printTraceFiles(Parameters *params) {
 }
 
 void printCacheInput(Parameters *params) {
-	const char *policy = (params->replacementPolicy == RR) ? "Round Robin" : "Random";
+	const char *policy = (params->replacementPolicy == RR) ? "Random" : "Round Robin";
 	printf("***** Cache Input Parameters *****\n\n");
 	printf("%-30s %d KB\n",    "Cache Size:",                    params->cacheSize);
 	printf("%-30s %d bytes\n", "Block Size:",                    params->blockSize);
