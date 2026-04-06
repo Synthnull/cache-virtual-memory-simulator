@@ -26,7 +26,8 @@ Process *InitProcessPageTable(int initialSize, int maxCapacity,
 										FILE *traceFile);
 int insertPage(int virAddr, int phyAddr, int validBit, PageTable *pageTablePtr);
 int addPage(int virAddr, int phyAddr, PageTable *pageTablePtr);
-int removePage(int virAddr, int phyAddr, PageTable *pageTablePtr);
+int removePageByVirAddr(int virAddr, int phyAddr, PageTable *pageTablePtr);
+int removePageByPhyAddr(int virAddr, int phyAddr, PageTable *pageTablePtr);
 int freeProcessPageTable(Process *processPtr);
 
 #endif

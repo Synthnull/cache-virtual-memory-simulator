@@ -17,23 +17,25 @@ Process *InitProcessPageTable(int initialSize, int maxCapacity,
 }
 
 int addPage(int virAddr, int phyAddr, PageTable *pageTablePtr) {
-   PageTableEntry* newPagePtr = malloc(sizeof(PageTableEntry));
-   pageTablePtr->numPages++;
-   if(pageTablePtr->numPages > pageTablePtr->maxCapacity) {
-      free(newPagePtr);
-      pageTablePtr->numPages--;
-      return 1; //capacity miss
-   }
+	PageTableEntry *newPagePtr = malloc(sizeof(PageTableEntry));
+	pageTablePtr->numPages++;
+	if (pageTablePtr->numPages > pageTablePtr->maxCapacity) {
+		free(newPagePtr);
+		pageTablePtr->numPages--;
+		return 1; // capacity miss
+	}
 
-   if(pageTablePtr->numPages > pageTablePtr->capacity) {
-      pageTablePtr->pages = realloc(pageTablePtr->pages, sizeof(PageTableEntry) * 8);
-   }
-   
-   pageTablePtr->pages[pageTablePtr->numPages].phyAddr = phyAddr;
-   pageTablePtr->pages[pageTablePtr->numPages].virAddr = phyAddr;
-   pageTablePtr->pages[pageTablePtr->numPages].validBit = 1;
+	if (pageTablePtr->numPages > pageTablePtr->capacity) {
+		pageTablePtr->pages =
+			 realloc(pageTablePtr->pages, sizeof(PageTableEntry) * 8);
+	}
 
-   return 0;
+	pageTablePtr->pages[pageTablePtr->numPages].phyAddr = phyAddr;
+	pageTablePtr->pages[pageTablePtr->numPages].virAddr = phyAddr;
+	pageTablePtr->pages[pageTablePtr->numPages].validBit = 1;
+
+	return 0;
 }
-int removePage(int virAddr, int phyAddr, PageTable *pageTablePtr) {}
+int removePageByVirAddr(int virAddr, int phyAddr, PageTable *pageTablePtr) {}
+int removePageByPhyAddr(int virAddr, int phyAddr, PageTable *pageTablePtr) {}
 int freeProcessPageTable(Process *processPtr) {}
