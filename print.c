@@ -54,3 +54,7 @@ void printCalculationResults(int teamNumber, Parameters *params,
 	printCacheCalculated(cacheCalc);
 	printPhysicalMemory(memResults);
 }
+
+void printVirMemorySimulationResults(MemorySimulationResults simResults) {
+
+}
