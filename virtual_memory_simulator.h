@@ -14,6 +14,6 @@ typedef struct {
 } MemorySimulationResults;
 
 int runVirtualMemorySimulation(Process **processes,
-										 MemoryCalculationResults *pgTableParameters);
-
+										 MemoryCalculationResults *pgTableParameters,
+										 MemorySimulationResults *results);
 #endif
