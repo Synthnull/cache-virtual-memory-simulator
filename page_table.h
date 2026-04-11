@@ -5,8 +5,8 @@
 #include <stdio.h>
 
 typedef struct {
-	int phyAddr;
-	int virAddr;
+	int phyAddr; /* physical page number */
+	int virAddr; /* virtual page number */
 	bool validBit;
    bool dirtyBit;
 } PageTableEntry;
