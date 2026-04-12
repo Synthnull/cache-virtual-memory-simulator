@@ -5,12 +5,10 @@
 
 #define LINE_BUF 4096
 #define EIP_ADDR_OFFSET 10
-#define DST_ADDR_OFFSET 6
-#define DST_DATA_OFFSET 15
-#define SRC_ADDR_OFFSET 27
-#define SRC_DATA_OFFSET 36
+#define ADDR_OFFSET 6
+#define DATA_OFFSET 15
 
-static TraceEntry pending[2];
+static TraceEntry pending[3];
 static int pendingCount = 0;
 static int pendingIndex = 0;
 
@@ -75,18 +73,12 @@ int getNextTraceEntry(FILE *file, TraceEntry *entry) {
     if (strncmp(dstLine, "dstM", 4) == 0) {
         unsigned int dstAddr = 0;
         unsigned int srcAddr = 0;
+        char *dstPtr = strstr(dstLine, "dstM:");
+        char *srcPtr = strstr(dstLine, "srcM:");
 
-        if (sscanf(dstLine + DST_ADDR_OFFSET, "%x", &dstAddr) == 1) {
-            if (dstAddr != 0 && !isInvalid(dstLine + DST_DATA_OFFSET)) {
-                pending[pendingCount].operation = 'W';
-                pending[pendingCount].virAddr = (uint32_t)dstAddr;
-                pending[pendingCount].instructionComplete = 0;
-                pendingCount++;
-            }
-        }
-
-        if (sscanf(dstLine + SRC_ADDR_OFFSET, "%x", &srcAddr) == 1) {
-            if (srcAddr != 0 && !isInvalid(dstLine + SRC_DATA_OFFSET)) {
+        /*read*/
+        if (!isInvalid(srcPtr + DATA_OFFSET)) {
+            if (sscanf(srcPtr + ADDR_OFFSET, "%x", &srcAddr) == 1) {
                 pending[pendingCount].operation = 'R';
                 pending[pendingCount].virAddr = (uint32_t)srcAddr;
                 pending[pendingCount].instructionComplete = 0;
@@ -94,6 +86,17 @@ int getNextTraceEntry(FILE *file, TraceEntry *entry) {
             }
         }
 
+
+        /*write*/
+        if (!isInvalid(dstPtr + DATA_OFFSET)) {
+            if (sscanf(dstPtr + ADDR_OFFSET, "%x", &dstAddr) == 1) {
+                pending[pendingCount].operation = 'W';
+                pending[pendingCount].virAddr = (uint32_t)dstAddr;
+                pending[pendingCount].instructionComplete = 0;
+                pendingCount++;
+            }
+        }
+                
         if (pendingCount > 0) {
             entry->instructionComplete = 0;
             pending[pendingCount - 1].instructionComplete = 1;
