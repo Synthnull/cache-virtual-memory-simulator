@@ -1,4 +1,5 @@
 #include "print.h"
+#include "page_table.h"
 #include <stdio.h>
 
 void printHeader(int teamNumber) {
@@ -62,7 +63,8 @@ void printCalculationResults(int teamNumber, Parameters *params,
 	printPhysicalMemory(memResults);
 }
 
-void printVirMemorySimulationResults(MemorySimulationResults simResults) {
+void printVirMemorySimulationResults(MemorySimulationResults simResults, Process **processes, int numProcesses) {
+   int i;
 	printf("***** VIRTUAL MEMORY SIMULATION RESULTS *****\n\n");
 	printf("%-30s %llu\n", "Physical Pages Used By SYSTEM:",
 			 simResults.physicalPagesUsedBySystem);
@@ -76,5 +78,9 @@ void printVirMemorySimulationResults(MemorySimulationResults simResults) {
    printf("%-30s %llu\n", "Total Page Faults:", simResults.pageFaults);
 
    printf("Page Table Usage Per Process:");
-   printf("------------------------------");
+   printf("-----------------------------");
+
+   for(i = 0; i < numProcesses; i++) {
+
+   }
 }

@@ -8,7 +8,7 @@ typedef struct {
 	int phyAddr; /* physical page number */
 	int virAddr; /* virtual page number */
 	bool validBit;
-   bool dirtyBit;
+	bool dirtyBit;
 } PageTableEntry;
 
 typedef struct {
@@ -19,12 +19,13 @@ typedef struct {
 } PageTable;
 
 typedef struct {
+	char *fileName;
 	FILE *tracefile;
 	PageTable *processPageTable;
 } Process;
 
-Process *InitProcessPageTable(int initialSize, int maxCapacity,
-										FILE *traceFile);
+Process *InitProcessPageTable(int initialSize, int maxCapacity, FILE *traceFile,
+										char *name);
 int insertPage(int virAddr, int phyAddr, int validBit, PageTable *pageTablePtr);
 int addPage(int virAddr, int phyAddr, PageTable *pageTablePtr);
 bool removePageByVirAddr(int virAddr, PageTable *pageTablePtr);
