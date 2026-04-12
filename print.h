@@ -4,9 +4,10 @@
 #include "cmd_parser.h"
 #include "memory_calculations.h"
 #include "virtual_memory_simulator.h"
+#include "page_table.h"
 
 void printCalculationResults(int teamNumber, Parameters *params,
 									  CacheOutput cacheCalc,
 									  MemoryCalculationResults memResults);
-void printVirMemorySimulationResults(MemorySimulationResults simResults);
+void printVirMemorySimulationResults(MemorySimulationResults simResults, Process** processes);
 #endif

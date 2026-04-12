@@ -6,6 +6,6 @@
 #include "virtual_memory_simulator.h"
 
 int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
-					  MemorySimulationResults *memSimResults);
+					  MemorySimulationResults *memSimResults, Process **Processes);
 
 #endif

@@ -5,9 +5,8 @@
 #include "vm_runner.h"
 
 int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
-					  MemorySimulationResults *memSimResults) {
+					  MemorySimulationResults *memSimResults, Process **processes) {
 
-	Process **processes;
 	int i;
 
 	processes = malloc(sizeof(Process *) * parameters->files.numFiles);
