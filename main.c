@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	runVMProcess(parameters, &memResults, &memSimResults, processes);
 	printVirMemorySimulationResults(memSimResults, processes,
 											  parameters->files.numFiles);
-	freeParameters(parameters);
 	freeProcesses(parameters->files.numFiles, processes);
+	freeParameters(parameters);
 	return 0;
 }
