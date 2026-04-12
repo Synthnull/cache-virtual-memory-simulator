@@ -38,12 +38,12 @@ int runVirtualMemorySimulation(Process **processes,
 	unsigned long long pagesAvailableToUser;
 	unsigned long long freePagesRemaining;
 	unsigned long long nextFreePhysicalPage;
-
 	if (processes == NULL || pgTableParameters == NULL || results == NULL) {
 		return 0;
 	}
 
 	numProcesses = pgTableParameters->num_trace_files;
+
 	if (numProcesses <= 0) {
 		return 0;
 	}

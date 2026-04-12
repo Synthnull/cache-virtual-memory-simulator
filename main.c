@@ -17,13 +17,14 @@ int main(int argc, char *argv[]) {
 
 	MemoryCalculationResults memResults;
 	CacheOutput cache_results;
-	MemorySimulationResults memSimResults;
+	MemorySimulationResults memSimResults = {0};
 
 	calculate_cache(parameters, &cache_results);
 	calculate_memory(parameters->physicalMemory, parameters->physicalMemoryOS,
 						  parameters->files.numFiles, &memResults);
 	printCalculationResults(12, parameters, cache_results, memResults);
 	runVMProcess(parameters, &memResults, &memSimResults);
+   printVirMemorySimulationResults(memSimResults);
 	freeParameters(parameters);
 	return 0;
 }
