@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LINE_BUF 256
+#define LINE_BUF 4096
 #define EIP_ADDR_OFFSET 10
 #define DST_ADDR_OFFSET 6
 #define DST_DATA_OFFSET 15

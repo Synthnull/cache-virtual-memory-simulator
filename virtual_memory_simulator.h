@@ -5,17 +5,16 @@
 #include "page_table.h"
 
 typedef struct {
-    unsigned long long physicalPagesUsedBySystem;
-    unsigned long long pagesAvaibletoUser;
-    unsigned long long virtualPagesMapped;
-    unsigned long long pageHits;
-    unsigned long long pagesFromFree;
-    unsigned long long pageFaults;
+	unsigned long long physicalPagesUsedBySystem;
+	unsigned long long pagesAvaibletoUser;
+	unsigned long long virtualPagesMapped;
+	unsigned long long pageHits;
+	unsigned long long pagesFromFree;
+	unsigned long long pageFaults;
 } MemorySimulationResults;
 
 int runVirtualMemorySimulation(Process **processes,
-                               MemoryCalculationResults *pgTableParameters,
-                               int timeSlice,
-                               MemorySimulationResults *results);
+										 MemoryCalculationResults *pgTableParameters,
+										 int timeSlice, MemorySimulationResults *results);
 
 #endif

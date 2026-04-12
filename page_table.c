@@ -67,7 +67,7 @@ int addPage(int virAddr, int phyAddr, PageTable *pageTablePtr) {
 		}
 
 		pageTablePtr->pages =
-			 realloc(pageTablePtr->pages, sizeof(PageTableEntry) * 8);
+			 realloc(pageTablePtr->pages, sizeof(PageTableEntry) * newCapacity);
 		pageTablePtr->capacity = newCapacity;
 	}
 
