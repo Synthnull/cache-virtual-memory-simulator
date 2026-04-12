@@ -80,8 +80,9 @@ void printVirMemorySimulationResults(MemorySimulationResults simResults, Process
    printf("Page Table Usage Per Process:");
    printf("-----------------------------");
 
-   //for(i = 0; i < numProcesses; i++) {
-      //printf("\n[%d] %s\n", i, processes[i]->fileName);
-      //printf("\n\t\t Used Page Table Entries: %d (%f %%)", processes[i]->processPageTable->numPages, processes[i]->processPageTable->numPages / (float)simResults.pagesAvaibletoUser);
-   //}
+   for(i = 0; i < numProcesses; i++) {
+      printf("\n[%d] %s\n", i, processes[i]->fileName);
+      printf("\n\t\t Used Page Table Entries: %d (%f %%)", processes[i]->processPageTable->numPages, processes[i]->processPageTable->numPages / (float)simResults.pagesAvaibletoUser);
+      printf("\n\t\t Page Table Wasted: %llu", 4096 * (processes[i]->processPageTable->numPages - simResults.pagesAvaibletoUser));
+   }
 }
