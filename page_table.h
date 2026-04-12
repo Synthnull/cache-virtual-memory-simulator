@@ -4,11 +4,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef struct {
+typedef struct PageTableEntry{
 	int phyAddr; /* physical page number */
 	int virAddr; /* virtual page number */
 	bool validBit;
    bool dirtyBit;
+   PageTableEntry* prev;
+   PageTableEntry* next;
 } PageTableEntry;
 
 typedef struct {
