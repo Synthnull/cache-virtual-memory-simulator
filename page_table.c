@@ -14,6 +14,7 @@ Process *InitProcessPageTable(int initialSize, int maxCapacity, FILE *traceFile,
 
 	processPtr->tracefile = traceFile;
 	processPtr->fileName = name;
+   processPtr->numPagesAtTermination = 0;
 	processPtr->processPageTable = malloc(sizeof(PageTable));
 
 	/*check if allocation failed*/

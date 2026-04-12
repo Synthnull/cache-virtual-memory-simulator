@@ -1,4 +1,5 @@
 #include "virtual_memory_simulator.h"
+#include "page_table.h"
 #include "trace_parser.h"
 #include <stdlib.h>
 
@@ -84,6 +85,7 @@ int runVirtualMemorySimulation(Process **processes,
 			if (currentProcess == NULL ||
 				 currentProcess->processPageTable == NULL) {
 				finishedArray[processIndex] = 1;
+
 				finishedCount++;
 				continue;
 			}
@@ -98,6 +100,7 @@ int runVirtualMemorySimulation(Process **processes,
 				int entryIndex;
 
 				if (!getNextTraceEntry(currentProcess->tracefile, &entry)) {
+
 					freePagesRemaining += (unsigned long long)currentTable->numPages;
 					finishedArray[processIndex] = 1;
 					finishedCount++;
@@ -132,6 +135,7 @@ int runVirtualMemorySimulation(Process **processes,
 
 						addPage(virtualPageNumber, physicalPageNumber, currentTable);
 						results->pagesFromFree++;
+						processes[processIndex]->numPagesAtTermination++;
 					} else {
 						int victimProcessIndex;
 						Process *victimProcess;
@@ -144,7 +148,7 @@ int runVirtualMemorySimulation(Process **processes,
 							free(finishedArray);
 							return 0;
 						}
-                  
+
 						victimProcess = processes[victimProcessIndex];
 						victimTable = victimProcess->processPageTable;
 
@@ -152,6 +156,7 @@ int runVirtualMemorySimulation(Process **processes,
 
 						removePageByPhyAddr(physicalPageNumber, victimTable);
 						addPage(virtualPageNumber, physicalPageNumber, currentTable);
+                  processes[processIndex]->numPagesAtTermination++;
 
 						nextEvictProcess = (victimProcessIndex + 1) % numProcesses;
 					}

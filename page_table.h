@@ -21,6 +21,7 @@ typedef struct {
 typedef struct {
 	char *fileName;
 	FILE *tracefile;
+   int numPagesAtTermination;
 	PageTable *processPageTable;
 } Process;
 
