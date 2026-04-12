@@ -3,20 +3,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Process *InitProcessPageTable(int initialSize, int maxCapacity,
-										FILE *traceFile) {
+Process *InitProcessPageTable(int initialSize, int maxCapacity, FILE *traceFile,
+										char *name) {
 	Process *processPtr = malloc(sizeof(Process));
-   
-   /*check if allocation failed*/ 
-   if (processPtr == NULL) {
+
+	/*check if allocation failed*/
+	if (processPtr == NULL) {
 		return NULL;
 	}
 
 	processPtr->tracefile = traceFile;
+   processPtr->fileName = name;
 	processPtr->processPageTable = malloc(sizeof(PageTable));
-   
-   /*check if allocation failed*/
-   if (processPtr->processPageTable == NULL) {
+
+	/*check if allocation failed*/
+	if (processPtr->processPageTable == NULL) {
 		free(processPtr);
 		return NULL;
 	}
@@ -147,7 +148,7 @@ int searchPageByPhy(PageTable *pageTablePtr, int phyAddr) {
 	}
 
 	for (i = 0; i < pageTablePtr->numPages; i++) {
-		if (pageTablePtr->pages[i].phyAddr== phyAddr) {
+		if (pageTablePtr->pages[i].phyAddr == phyAddr) {
 			return i;
 		}
 	}

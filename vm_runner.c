@@ -5,12 +5,11 @@
 #include "vm_runner.h"
 
 int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
-					  MemorySimulationResults *memSimResults) {
+					  MemorySimulationResults *memSimResults, Process **processes) {
 
-	Process **processes;
 	int i;
 
-	processes = malloc(sizeof(Process *) * parameters->files.numFiles);
+	//processes = malloc(sizeof(Process *) * parameters->files.numFiles);
 	if (processes == NULL) {
 		return 1;
 	}
@@ -18,13 +17,14 @@ int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
 	for (i = 0; i < parameters->files.numFiles; i++) {
 		processes[i] =
 			 InitProcessPageTable(10, (int)memResults->number_physical_pages,
-										 parameters->files.files[i].filePtr);
+										 parameters->files.files[i].filePtr,
+										 parameters->files.files[i].fileName);
 
 		if (processes[i] == NULL) {
 			while (--i >= 0) {
 				freeProcessPageTable(processes[i]);
 			}
-			free(processes);
+			//free(processes);
 			return 1;
 		}
 	}
@@ -32,11 +32,15 @@ int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
 	runVirtualMemorySimulation(processes, memResults, parameters->timeSlice,
 										memSimResults);
 
-	for (i = 0; i < parameters->files.numFiles; i++) {
+	return 0;
+}
+
+int freeProcesses(int numFiles, Process **processes) {
+	int i;
+	for (i = 0; i < numFiles; i++) {
 		freeProcessPageTable(processes[i]);
 	}
 
 	free(processes);
-
 	return 0;
 }
