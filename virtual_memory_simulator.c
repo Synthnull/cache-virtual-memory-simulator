@@ -136,9 +136,7 @@ int runVirtualMemorySimulation(Process **processes,
 						int victimProcessIndex;
 						Process *victimProcess;
 						PageTable *victimTable;
-
 						results->pageFaults++;
-
 						victimProcessIndex = findVictimProcess(
 							 processes, finishedArray, numProcesses, nextEvictProcess);
 
@@ -146,11 +144,12 @@ int runVirtualMemorySimulation(Process **processes,
 							free(finishedArray);
 							return 0;
 						}
-
+                  
 						victimProcess = processes[victimProcessIndex];
 						victimTable = victimProcess->processPageTable;
 
 						physicalPageNumber = victimTable->pages[0].phyAddr;
+
 						removePageByPhyAddr(physicalPageNumber, victimTable);
 						addPage(virtualPageNumber, physicalPageNumber, currentTable);
 

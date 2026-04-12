@@ -9,14 +9,15 @@ int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
 
 	int i;
 
-	//processes = malloc(sizeof(Process *) * parameters->files.numFiles);
+	// processes = malloc(sizeof(Process *) * parameters->files.numFiles);
 	if (processes == NULL) {
 		return 1;
 	}
 
 	for (i = 0; i < parameters->files.numFiles; i++) {
 		processes[i] =
-			 InitProcessPageTable(10, (int)memResults->number_physical_pages,
+			 InitProcessPageTable(10,
+										 memResults->number_physical_pages - memResults->number_pages_for_system,
 										 parameters->files.files[i].filePtr,
 										 parameters->files.files[i].fileName);
 
@@ -24,7 +25,7 @@ int runVMProcess(Parameters *parameters, MemoryCalculationResults *memResults,
 			while (--i >= 0) {
 				freeProcessPageTable(processes[i]);
 			}
-			//free(processes);
+			// free(processes);
 			return 1;
 		}
 	}
