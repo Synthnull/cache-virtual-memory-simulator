@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "page_table.h"
@@ -32,6 +33,13 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 
 	runVirtualMemorySimulation(processes, memResults, parameters->timeSlice,
 										memSimResults);
+
+   //Prep processes for cache simulation
+   for(i = 0; parameters->files.numFiles; i++) {
+      if(parameters->files.files[i].filePtr != NULL) {
+         rewind(parameters->files.files[i].filePtr);
+      }
+   }
 
 	return 0;
 }
