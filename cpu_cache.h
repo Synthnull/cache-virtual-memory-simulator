@@ -23,5 +23,6 @@ typedef struct {
 } Cache;
 
 Cache* initCache(CacheInput cacheInputParameters, CacheOutput cacheCalcResults);
+int freeCache(Cache* cachePtr);
 
 #endif

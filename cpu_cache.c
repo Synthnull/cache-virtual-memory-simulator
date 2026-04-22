@@ -25,3 +25,20 @@ Cache *initCache(CacheInput cacheInputParameters,
 	}
 	return newCache;
 }
+
+int freeCache(Cache *cachePtr) {
+	int i;
+	if (cachePtr == NULL) {
+		return 1;
+	}
+
+	for (i = 0; i < cachePtr->rows; i++) {
+		if (cachePtr->cacheBlocks[i] != NULL) {
+			free(cachePtr->cacheBlocks[i]);
+		}
+	}
+
+	free(cachePtr->cacheBlocks);
+	free(cachePtr);
+	return 0;
+}
