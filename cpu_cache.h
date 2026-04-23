@@ -14,11 +14,14 @@ typedef struct {
 typedef struct {
 	int associativity;
 	int rows;
+	int tagSize;
+	int indexSize;
 	CacheBlock **cacheBlocks;
 } Cache;
 
 Cache *initCache(CacheInput cacheInputParameters, CacheOutput cacheCalcResults);
-MissType readCache(Cache *cachePtr, int phyAddr);
+MissType readCache(Cache *cachePtr, int phyAddr, int *cacheCol);
+MissType writeCache(Cache * cachePtr, int phyAddr);
 int freeCache(Cache *cachePtr);
 
 #endif
