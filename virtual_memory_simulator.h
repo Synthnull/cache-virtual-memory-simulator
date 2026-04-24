@@ -25,7 +25,14 @@ typedef struct {
 	unsigned long long nextFreePhysicalPage;
 } MemoryState;
 
-int runVirtualMemorySimulation(Process **processes, int processIndex,
+typedef enum {
+   PROC_SKIP,
+   PROC_FINISHED,
+   ERR,
+   SUCCESS,
+} MemoryReturnState;
+
+MemoryReturnState runVirtualMemorySimulation(Process **processes, int processIndex,
 										 MemoryCalculationResults *pgTableParameters,
 										 int timeSlice, MemorySimulationResults *results,
 										 MemoryState *state, TraceEntry entry,

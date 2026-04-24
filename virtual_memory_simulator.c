@@ -25,7 +25,7 @@ static int findVictimProcess(Process **processes, int *finishedArray,
 	return -1;
 }
 
-int runVirtualMemorySimulation(Process **processes, int processIndex,
+MemoryReturnState runVirtualMemorySimulation(Process **processes, int processIndex,
 										 MemoryCalculationResults *pgTableParameters,
 										 int timeSlice, MemorySimulationResults *results,
 										 MemoryState *state, TraceEntry entry,
@@ -34,16 +34,15 @@ int runVirtualMemorySimulation(Process **processes, int processIndex,
 	PageTable *currentTable;
 
 	if (state->finishedArray[processIndex]) {
-		return 0;
+		return PROC_SKIP;
 	}
 
 	currentProcess = processes[processIndex];
 	currentTable = currentProcess->processPageTable;
 	if (currentProcess == NULL || currentProcess->processPageTable == NULL) {
 		state->finishedArray[processIndex] = 1;
-
 		state->finishedCount++;
-		return 0;
+		return PROC_FINISHED;
 	}
 
 	int virtualPageNumber;
@@ -89,7 +88,7 @@ int runVirtualMemorySimulation(Process **processes, int processIndex,
 
 			if (victimProcessIndex < 0) {
 				free(state->finishedArray);
-				return 0;
+				return ERR;
 			}
 
 			victimProcess = processes[victimProcessIndex];
@@ -105,5 +104,5 @@ int runVirtualMemorySimulation(Process **processes, int processIndex,
 		}
 	}
 
-	return 1;
+	return SUCCESS;
 }

@@ -2,6 +2,7 @@
 #define CACHE_CALCULATIONS_H
 
 #include "cmd_parser.h"
+#include "trace_parser.h"
 
 typedef struct {
 	unsigned int cache_size_kb;
@@ -23,6 +24,6 @@ typedef struct {
 	double cost;
 } CacheOutput;
 
-int calculate_cache(const Parameters *input, CacheOutput *output);
+int calculate_cache(const Parameters *input, CacheOutput *output, TraceEntry entry);
 
 #endif
