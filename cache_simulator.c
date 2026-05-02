@@ -5,8 +5,7 @@
 #include "error.h"
 
 MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
-                             CacheSimulationResults *results, int phyAddr,
-                             char instType) {
+                             CacheSimulationResults *results, int phyAddr, char instType) {
     MissType missType;
     int cacheCol = 0;
     int tag;
@@ -21,14 +20,9 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 
     missType = readCache(cachePtr, phyAddr, &cacheCol);
 
-    results->totalAccesses++;
     if (instType == 'R') {
+        results->totalAccesses++;
         results->instructionBytes += cacheParameters->block_size;
-    } else {
-        results->destBytes += cacheParameters->block_size;
-    }
-
-    if (instType == 'R') {
         switch (missType) {
         case CONFLICT:
             results->conflictMisses++;
@@ -36,7 +30,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
             break;
         case COMPULSORY:
             results->compulsoryMisses++;
-            roundRobinReplace(cachePtr, index, tag, offset);
+            cachePtr->cacheBlocks[index][cacheCol].tag     = tag;
+            cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
             break;
         case CAPACITY:
             results->capacityMisses++;
@@ -46,6 +41,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
             break;
         }
     } else {
+        results->totalAccesses++;
+        results->destBytes += cacheParameters->block_size;
         switch (missType) {
         case CONFLICT:
             results->conflictMisses++;
@@ -53,7 +50,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
             break;
         case COMPULSORY:
             results->compulsoryMisses++;
-            roundRobinReplace(cachePtr, index, tag, offset);
+            cachePtr->cacheBlocks[index][cacheCol].tag      = tag;
+            cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
             break;
         case CAPACITY:
             results->capacityMisses++;
