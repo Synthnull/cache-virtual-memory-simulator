@@ -15,11 +15,16 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 						MemorySimulationResults *memSimResults,
 						CacheSimulationResults *cacheSimResults,
 						Process **processes) {
-
 	int i;
+	Cache *cache;
+	MemoryState state = {0};
+	int numProcesses;
+	int instructionsExecutedThisSlice;
+	int timeSlice;
 
-	// processes = malloc(sizeof(Process *) * parameters->files.numFiles);
-	if (processes == NULL) {
+	if (processes == NULL || parameters == NULL || memResults == NULL ||
+		 cacheResults == NULL || memSimResults == NULL ||
+		 cacheSimResults == NULL) {
 		return 1;
 	}
 
@@ -35,22 +40,24 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 			while (--i >= 0) {
 				freeProcessPageTable(processes[i]);
 			}
-			// free(processes);
 			return 1;
 		}
 	}
 
-	Cache *cache = initCache(associativity, *cacheResults);
+	cache = initCache(associativity, *cacheResults);
 
-	// simulation loop
-	MemoryState state = {0};
-	int numProcesses = parameters->files.numFiles;
-	int instructionsExecutedThisSlice;
-	int timeSlice = parameters->timeSlice;
+	if (cache == NULL) {
+		return 1;
+	}
+
+	numProcesses = parameters->files.numFiles;
+	timeSlice = parameters->timeSlice;
 
 	state.finishedArray = calloc(numProcesses, sizeof(int));
+
 	if (state.finishedArray == NULL) {
-		return 0;
+		freeCache(cache);
+		return 1;
 	}
 
 	state.totalPhysicalPages = memResults->number_physical_pages;
@@ -68,16 +75,6 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 	memSimResults->pagesFromFree = 0;
 	memSimResults->pageFaults = 0;
 
-	if (processes == NULL || cacheResults == NULL || memSimResults == NULL) {
-		return 1;
-	}
-
-	numProcesses = memResults->num_trace_files;
-
-	if (numProcesses <= 0) {
-		return 0;
-	}
-
 	while (state.finishedCount < numProcesses) {
 		int processIndex;
 		PageTable *currentTable;
@@ -85,10 +82,16 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 
 		for (processIndex = 0; processIndex < numProcesses; processIndex++) {
 			Process *currentProcess;
+
 			currentProcess = processes[processIndex];
+
+			if (state.finishedArray[processIndex]) {
+				continue;
+			}
 
 			if (currentProcess == NULL ||
 				 currentProcess->processPageTable == NULL) {
+				state.finishedArray[processIndex] = 1;
 				state.finishedCount++;
 				continue;
 			}
@@ -100,7 +103,6 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 				TraceEntry entry;
 				MemoryReturnStatus memStatus;
 
-				// get next instruction
 				if (!getNextTraceEntry(currentProcess->tracefile, &entry)) {
 					state.freePagesRemaining +=
 						 (unsigned long long)currentTable->numPages;
@@ -116,34 +118,45 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 				switch (memStatus) {
 				case PROC_SKIP:
 					continue;
+
+				case PROC_FINISHED:
 					break;
-				case PROC_FINISHED: // invalidate cache entries
-					break;
+
 				case ERR:
+					free(state.finishedArray);
+					freeCache(cache);
 					return 1;
-					break;
+
 				case SUCCESS:
-					// do nothing
 					break;
 				}
-				runCacheSimulation(cache, cacheResults, cacheSimResults,
-										 currentTable->pages[affectedPages.addedIdx].phyAddr, entry.operation);
+
+				runCacheSimulation(
+					 cache, cacheResults, cacheSimResults,
+					 currentTable->pages[affectedPages.addedIdx].phyAddr,
+					 entry.operation, parameters->replacementPolicy);
+
 				if (entry.instructionComplete) {
 					instructionsExecutedThisSlice++;
 				}
 			}
 		}
 	}
+
 	free(state.finishedArray);
+	freeCache(cache);
+
 	return 0;
 }
 
 int freeProcesses(int numFiles, Process **processes) {
 	int i;
+
 	for (i = 0; i < numFiles; i++) {
 		freeProcessPageTable(processes[i]);
 	}
 
 	free(processes);
+
 	return 0;
 }
