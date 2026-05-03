@@ -16,14 +16,13 @@ typedef struct {
 	int rows;
 	int tagSize;
 	int indexSize;
+	int *nextReplace;
 	CacheBlock **cacheBlocks;
 } Cache;
 
 Cache *initCache(int associativity, CacheOutput cacheCalcResults);
 MissType readCache(Cache *cachePtr, int phyAddr, int *cacheCol);
-int flushCache(Cache *cachePtr,
-					PageTable *processPtr); /* flush all cache entries associated
-													 with a process */
+int flushCache(Cache *cachePtr, PageTable *processPtr);
 int freeCache(Cache *cachePtr);
 
 #endif
