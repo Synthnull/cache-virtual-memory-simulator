@@ -32,13 +32,23 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 
 	missType = readCache(cachePtr, phyAddr, &cacheCol);
 
+	if (missType == NO_MISS) {
+    results->totalCycles += 1;
+} else {
+    int memoryReads = (blockSize + 3) / 4;
+    results->totalCycles += 4 * memoryReads;
+}
+
 	results->totalAccesses++;
       
-	if (instType == 'R') {
-		results->instructionBytes += blockSize;
-	} else {
-		results->destBytes += blockSize;
-	}
+if (instType == 'R') {
+    results->instructionBytes += cacheParameters->block_size;
+    results->totalInstructions++;
+    results->totalCycles += 2;
+} else {
+    results->destBytes += cacheParameters->block_size;
+    results->totalCycles += 1;
+}
 
 	switch (missType) {
 	case CONFLICT:
