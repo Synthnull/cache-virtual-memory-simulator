@@ -10,4 +10,5 @@ void printCalculationResults(int teamNumber, Parameters *params,
 									  CacheOutput cacheCalc,
 									  MemoryCalculationResults memResults);
 void printVirMemorySimulationResults(MemorySimulationResults simResults, Process** processes, int numProcesses);
+void printCacheSimulationResults(CacheSimulationResults results, CacheOutput cacheCalc);
 #endif
