@@ -134,7 +134,7 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 				runCacheSimulation(
 					 cache, cacheResults, cacheSimResults,
 					 currentTable->pages[affectedPages.addedIdx].phyAddr,
-					 entry.operation, parameters->replacementPolicy);
+					 entry.operation, parameters->replacementPolicy, parameters->blockSize);
 
 				if (entry.instructionComplete) {
 					instructionsExecutedThisSlice++;

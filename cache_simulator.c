@@ -16,7 +16,7 @@ static void replaceCacheBlock(Cache *cachePtr, ReplacementPolicy policy,
 
 MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 									  CacheSimulationResults *results, int phyAddr,
-									  char instType, ReplacementPolicy policy) {
+									  char instType, ReplacementPolicy policy, int blockSize) {
 	MissType missType;
 	int cacheCol = 0;
 	int tag;
@@ -33,11 +33,11 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 	missType = readCache(cachePtr, phyAddr, &cacheCol);
 
 	results->totalAccesses++;
-
+      
 	if (instType == 'R') {
-		results->instructionBytes += cacheParameters->block_size;
+		results->instructionBytes += blockSize;
 	} else {
-		results->destBytes += cacheParameters->block_size;
+		results->destBytes += blockSize;
 	}
 
 	switch (missType) {

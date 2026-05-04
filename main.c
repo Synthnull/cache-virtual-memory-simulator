@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
 					  &cacheSimResults, processes);
 	printVirMemorySimulationResults(memSimResults, processes,
 											  parameters->files.numFiles);
+   printCacheSimulationResults(cacheSimResults, cache_results);
 	freeProcesses(parameters->files.numFiles, processes);
 	freeParameters(parameters);
 	return 0;
