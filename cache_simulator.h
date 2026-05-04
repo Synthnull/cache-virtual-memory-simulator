@@ -17,6 +17,6 @@ typedef struct {
 
 MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 									  CacheSimulationResults *results, int phyAddr,
-									  char instType, ReplacementPolicy policy);
+									  char instType, ReplacementPolicy policy, int blockSize);
 
 #endif
