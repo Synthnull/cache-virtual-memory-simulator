@@ -107,6 +107,7 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 						 (unsigned long long)currentTable->numPages;
 					state.finishedArray[processIndex] = 1;
 					state.finishedCount++;
+               flushCache(cache, currentTable);
 					break;
 				}
 

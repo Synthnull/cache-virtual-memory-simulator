@@ -86,6 +86,8 @@ int flushCache(Cache *cachePtr, PageTable *processPtr) {
 	int j;
 	int currCacheCol;
 	unsigned int index;
+   unsigned int tag;
+   unsigned int offset;
 
 	if (cachePtr == NULL || processPtr == NULL) {
 		return 1;
@@ -97,7 +99,7 @@ int flushCache(Cache *cachePtr, PageTable *processPtr) {
 
 		for (j = 0; j < 4096; j++) {
          unsigned int currPhyAddr = basePhyAddr + j;
-			parseAddress(currPhyAddr, NULL, &index, NULL, cachePtr->tagSize,
+			parseAddress(currPhyAddr, &tag, &index, &offset, cachePtr->tagSize,
 							 cachePtr->indexSize);
 
 			if (readCache(cachePtr, currPhyAddr, &currCacheCol) == NO_MISS) {
