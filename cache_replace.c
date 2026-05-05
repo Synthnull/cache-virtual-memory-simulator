@@ -1,5 +1,6 @@
 #include "cache_replace.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /*** return index/column of cache block replaced *****/
 int roundRobinReplace(Cache *cachePtr, unsigned int index, unsigned int tag,
@@ -20,7 +21,6 @@ int roundRobinReplace(Cache *cachePtr, unsigned int index, unsigned int tag,
 
 	cachePtr->nextReplace[index] =
 		 (cachePtr->nextReplace[index] + 1) % cachePtr->associativity;
-
 	return victimCol;
 }
 

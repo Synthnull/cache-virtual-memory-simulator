@@ -18,8 +18,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	printf("numfiles:%d", parameters->files.numFiles);
-
 	MemoryCalculationResults memResults = {0};
 	CacheOutput cache_results = {0};
 	MemorySimulationResults memSimResults = {0};
@@ -31,11 +29,11 @@ int main(int argc, char *argv[]) {
 	printCalculationResults(12, parameters, cache_results, memResults);
 	Process **processes =
 		 calloc(parameters->files.numFiles + 1, sizeof(Process *));
-	runSimulation(parameters, &memResults, parameters->associativity, &cache_results, &memSimResults,
-					  &cacheSimResults, processes);
+	runSimulation(parameters, &memResults, parameters->associativity,
+					  &cache_results, &memSimResults, &cacheSimResults, processes);
 	printVirMemorySimulationResults(memSimResults, processes,
 											  parameters->files.numFiles);
-   printCacheSimulationResults(cacheSimResults, cache_results);
+	printCacheSimulationResults(cacheSimResults, cache_results);
 	freeProcesses(parameters->files.numFiles, processes);
 	freeParameters(parameters);
 	return 0;

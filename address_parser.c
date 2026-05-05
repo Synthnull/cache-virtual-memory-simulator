@@ -1,7 +1,7 @@
 #include "address_parser.h"
 
-int parseAddress(unsigned int phyAddr, unsigned int *tag, unsigned int *index, unsigned int *offset, int tagSize,
-					  int indexSize) {
+int parseAddress(unsigned int phyAddr, unsigned int *tag, unsigned int *index,
+					  unsigned int *offset, int tagSize, int indexSize) {
 	unsigned int address = (unsigned int)phyAddr;
 
 	int offsetSize = 32 - (tagSize + indexSize);
@@ -12,5 +12,6 @@ int parseAddress(unsigned int phyAddr, unsigned int *tag, unsigned int *index, u
 	*offset = address & offsetMask;
 	*index = (address >> offsetSize) & indexMask;
 	*tag = address >> (offsetSize + indexSize);
+
 	return 0;
 }

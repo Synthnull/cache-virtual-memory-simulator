@@ -15,9 +15,9 @@ static void replaceCacheBlock(Cache *cachePtr, ReplacementPolicy policy,
 }
 
 MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
-									 CacheSimulationResults *results, unsigned int phyAddr,
-									 char instType, ReplacementPolicy policy,
-									 int blockSize) {
+									 CacheSimulationResults *results,
+									 unsigned int phyAddr, char instType,
+									 ReplacementPolicy policy, int blockSize) {
 	MissType missType;
 	int cacheCol = 0;
 	unsigned int tag;
@@ -59,11 +59,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 
 	case COMPULSORY:
 		results->compulsoryMisses++;
-		cachePtr->cacheBlocks[index][cacheCol].tag = tag;
-		cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
-		cachePtr->cacheBlocks[index][cacheCol].dirtybit = 0;
-      cachePtr->nextReplace[index] = cacheCol;
-      break;
+		replaceCacheBlock(cachePtr, policy, index, tag, offset);
+		break;
 
 	case CAPACITY:
 		results->capacityMisses++;
