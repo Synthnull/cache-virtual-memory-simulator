@@ -19,9 +19,7 @@ static unsigned int log2_int(unsigned long long n) {
 
 int calculate_cache(const Parameters *input, CacheOutput *output) {
 	unsigned long long cache_size_bytes;
-	unsigned long long physical_memory_bytes;
 	unsigned int block_offset_bits;
-	unsigned int physical_address_bits;
 
 	if (input == 0 || output == 0) {
 		return 0;
@@ -30,7 +28,6 @@ int calculate_cache(const Parameters *input, CacheOutput *output) {
 	memset(output, 0, sizeof(CacheOutput));
 
 	cache_size_bytes = (unsigned long long)input->cacheSize * KB;
-	physical_memory_bytes = (unsigned long long)input->physicalMemory * MB;
 
 	if (input->blockSize == 0 || input->associativity == 0 ||
 		 input->files.numFiles == 0) {
@@ -42,10 +39,8 @@ int calculate_cache(const Parameters *input, CacheOutput *output) {
 
 	block_offset_bits = log2_int(input->blockSize);
 	output->index_size = log2_int(output->total_rows);
-	physical_address_bits = log2_int(physical_memory_bytes);
 
-	output->tag_size =
-		 32 - (output->index_size + block_offset_bits);
+	output->tag_size = 32 - (output->index_size + block_offset_bits);
 
 	output->overhead_size_bytes =
 		 (output->total_blocks * (output->tag_size + 1) + 7) / 8;
