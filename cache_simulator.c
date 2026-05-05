@@ -59,7 +59,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 
 	case COMPULSORY:
 		results->compulsoryMisses++;
-		replaceCacheBlock(cachePtr, policy, index, tag, offset);
+		cachePtr->cacheBlocks[index][cacheCol].tag = tag;
+		cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
 		break;
 
 	case CAPACITY:
