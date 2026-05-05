@@ -45,7 +45,7 @@ int calculate_cache(const Parameters *input, CacheOutput *output) {
 	physical_address_bits = log2_int(physical_memory_bytes);
 
 	output->tag_size =
-		 physical_address_bits - output->index_size - block_offset_bits;
+		 32 - (output->index_size + block_offset_bits);
 
 	output->overhead_size_bytes =
 		 (output->total_blocks * (output->tag_size + 1) + 7) / 8;

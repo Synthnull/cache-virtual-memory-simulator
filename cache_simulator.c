@@ -62,7 +62,8 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 		cachePtr->cacheBlocks[index][cacheCol].tag = tag;
 		cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
 		cachePtr->cacheBlocks[index][cacheCol].dirtybit = 0;
-		break;
+      cachePtr->nextReplace[index] = cacheCol;
+      break;
 
 	case CAPACITY:
 		results->capacityMisses++;
