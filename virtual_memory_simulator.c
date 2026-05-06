@@ -2,6 +2,7 @@
 #include "cpu_cache.h"
 #include "page_table.h"
 #include "trace_parser.h"
+#include "address_parser.h"
 #include <stdlib.h>
 
 static int findVictimProcess(Process **processes, int *finishedArray,
@@ -23,12 +24,11 @@ static int findVictimProcess(Process **processes, int *finishedArray,
 	return -1;
 }
 
-MemoryReturnStatus
-runVirtualMemorySimulation(Process **processes, int processIndex,
-									MemoryCalculationResults *pgTableParameters,
-									int timeSlice, MemorySimulationResults *results,
-									MemoryState *state, TraceEntry entry,
-									int numProcesses, PagesAffected *pagesAffected, Cache *cachePtr) {
+MemoryReturnStatus runVirtualMemorySimulation(
+	 Process **processes, int processIndex,
+	 MemoryCalculationResults *pgTableParameters, int timeSlice,
+	 MemorySimulationResults *results, MemoryState *state, TraceEntry entry,
+	 int numProcesses, PagesAffected *pagesAffected, Cache *cachePtr) {
 	Process *currentProcess;
 	PageTable *currentTable;
 
@@ -97,7 +97,25 @@ runVirtualMemorySimulation(Process **processes, int processIndex,
 			victimProcess = processes[victimProcessIndex];
 			victimTable = victimProcess->processPageTable;
 
-			physicalPageNumber = victimTable->pages[0].phyAddr;
+			unsigned int physicalPageNumber = victimTable->pages[0].phyAddr;
+
+			unsigned int pageOffset = entry.virAddr & PAGE_OFFSET_MASK;
+			unsigned int fullPhyAddr = (physicalPageNumber << PAGE_OFFSET_BITS) | pageOffset;
+         int j;
+         unsigned int tag;
+         unsigned int offset;
+         unsigned int index;
+         int currCacheCol;
+			for (j = 0; j < 4096; j++) {
+				unsigned int currPhyAddr = fullPhyAddr + j;
+				parseAddress(currPhyAddr, &tag, &index, &offset, cachePtr->tagSize,
+								 cachePtr->indexSize);
+
+				if (readCache(cachePtr, currPhyAddr, &currCacheCol) == NO_MISS) {
+					cachePtr->cacheBlocks[index][currCacheCol].validbit = 0;
+				}
+			}
+
 			removedPageIndex =
 				 removePageByPhyAddr(physicalPageNumber, victimTable);
 			addPage(virtualPageNumber, physicalPageNumber, currentTable);
