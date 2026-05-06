@@ -6,7 +6,8 @@
 #include "error.h"
 
 static void replaceCacheBlock(Cache *cachePtr, ReplacementPolicy policy,
-										int index, int tag, int offset) {
+										unsigned int index, unsigned int tag,
+										unsigned int offset) {
 	if (policy == RND) {
 		randomReplace(cachePtr, index, tag, offset);
 	} else {
@@ -16,37 +17,56 @@ static void replaceCacheBlock(Cache *cachePtr, ReplacementPolicy policy,
 
 MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 									 CacheSimulationResults *results,
-									 unsigned int phyAddr, char instType, int instSize,
+									 unsigned int phyAddr, char instType,
+									 int instSize, int isInstruction,
 									 ReplacementPolicy policy, int blockSize) {
-	MissType missType;
+	MissType missType = NO_MISS;
 	int cacheCol = 0;
 	unsigned int tag;
 	unsigned int index;
 	unsigned int offset;
+	unsigned int firstBlock;
+	unsigned int lastBlock;
+	unsigned int currentBlock;
+	unsigned int accessAddr;
+	int blockOffset;
+	int accessSize;
+
+	(void)instType;
 
 	if (cachePtr == NULL || cacheParameters == NULL || results == NULL) {
 		return NO_MISS;
 	}
 
-	results->totalInstructions++;
-	if (instType == 'R') {
-		results->instructionBytes += instSize;
+	accessSize = isInstruction ? instSize : 4;
+
+	if (accessSize <= 0) {
+		accessSize = 4;
+	}
+
+	results->totalAddresses++;
+
+	if (isInstruction) {
+		results->totalInstructions++;
+		results->instructionBytes += accessSize;
 		results->totalCycles += 2;
 	} else {
-		results->destBytes += blockSize;
+		results->destBytes += accessSize;
 		results->totalCycles += 1;
 	}
 
-	int blockOffset = 32 - (cachePtr->indexSize + cachePtr->tagSize);
-	unsigned int firstBlock = phyAddr >> blockOffset;
-	unsigned int lastBlock = (phyAddr + instSize) >> blockOffset;
-	results->totalAddresses++;
-	for (unsigned int currentBlock = firstBlock; currentBlock <= lastBlock;
-		  currentBlock++) {
-		results->totalAccesses++;
-		unsigned int accessAddr = currentBlock << blockOffset;
+	blockOffset = 32 - (cachePtr->indexSize + cachePtr->tagSize);
 
-		parseAddress(accessAddr, &tag, &index, &offset, cacheParameters->tag_size,
+	firstBlock = phyAddr >> blockOffset;
+	lastBlock = (phyAddr + (unsigned int)accessSize - 1) >> blockOffset;
+
+	for (currentBlock = firstBlock; currentBlock <= lastBlock; currentBlock++) {
+		results->totalAccesses++;
+
+		accessAddr = currentBlock << blockOffset;
+
+		parseAddress(accessAddr, &tag, &index, &offset,
+						 cacheParameters->tag_size,
 						 cacheParameters->index_size);
 
 		missType = readCache(cachePtr, accessAddr, &cacheCol);
@@ -68,6 +88,7 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 			results->compulsoryMisses++;
 			cachePtr->cacheBlocks[index][cacheCol].tag = tag;
 			cachePtr->cacheBlocks[index][cacheCol].validbit = 1;
+			cachePtr->cacheBlocks[index][cacheCol].dirtybit = 0;
 			break;
 
 		case CAPACITY:
