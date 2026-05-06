@@ -31,7 +31,7 @@ MissType runCacheSimulation(Cache *cachePtr, CacheOutput *cacheParameters,
 	// check multi block instruction:
    int blockOffset = 32 - (cachePtr->indexSize + cachePtr->tagSize);
 	unsigned int firstBlock = phyAddr >> blockOffset;
-	unsigned int lastBlock = (phyAddr + instSize - 1) >> blockOffset;
+	unsigned int lastBlock = (phyAddr + instSize) >> blockOffset;
 	results->totalAccesses++;
 	for (unsigned int currentBlock = firstBlock; currentBlock <= lastBlock;
 		  currentBlock++) {
