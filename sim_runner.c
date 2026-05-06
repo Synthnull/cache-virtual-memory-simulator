@@ -77,11 +77,11 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 
 	while (state.finishedCount < numProcesses) {
 		int processIndex;
-		PageTable *currentTable;
-		PagesAffected affectedPages = {0};
 
 		for (processIndex = 0; processIndex < numProcesses; processIndex++) {
 			Process *currentProcess;
+			PageTable *currentTable;
+
 			currentProcess = processes[processIndex];
 
 			if (state.finishedArray[processIndex]) {
@@ -101,6 +101,10 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 			while (timeSlice == -1 || instructionsExecutedThisSlice < timeSlice) {
 				TraceEntry entry;
 				MemoryReturnStatus memStatus;
+				PagesAffected affectedPages = {0};
+				unsigned int PPN;
+				unsigned int pageOffset;
+				unsigned int phyAddr;
 
 				if (!getNextTraceEntry(currentProcess->tracefile, &entry)) {
 					state.freePagesRemaining +=
@@ -119,25 +123,27 @@ int runSimulation(Parameters *parameters, MemoryCalculationResults *memResults,
 				switch (memStatus) {
 				case PROC_SKIP:
 					continue;
+
 				case PROC_FINISHED:
-					flushCache(cache, processes[processIndex]->processPageTable);
-					break;
+					flushCache(cache, currentTable);
+					continue;
+
 				case ERR:
 					free(state.finishedArray);
 					freeCache(cache);
 					return 1;
+
 				case SUCCESS:
 					break;
 				}
 
-				unsigned int PPN =
-					 currentTable->pages[affectedPages.addedIdx].phyAddr;
-				unsigned int pageOffset = entry.virAddr & PAGE_OFFSET_MASK;
-
-				unsigned int phyAddr = (PPN << PAGE_OFFSET_BITS) | pageOffset;
+				PPN = currentTable->pages[affectedPages.addedIdx].phyAddr;
+				pageOffset = entry.virAddr & PAGE_OFFSET_MASK;
+				phyAddr = (PPN << PAGE_OFFSET_BITS) | pageOffset;
 
 				runCacheSimulation(cache, cacheResults, cacheSimResults, phyAddr,
 										 entry.operation, entry.instructionSize,
+										 entry.isInstruction,
 										 parameters->replacementPolicy,
 										 parameters->blockSize);
 
